@@ -8,24 +8,33 @@ console.log("Here's the data you're working with");
 console.log({ CATEGORIES, TASKS });
 
 function App() {
-  const [tasks, setTasks] = useState(TASKS);
-  const [category, setCategory] = useState("ALL");
+  const [selectedCategory, setSelectedCategory] = useState("All")
+  const [tasks, setTasks] = useState(TASKS)
 
-  function handleAddTask(newTask) {
-    setTasks([...tasks, newTask]);
+  function handleFormSubmit(formData){
+    setTasks([...tasks, formData])
   }
 
-  function handleDeleteTask(deletedTaskText){
-    setTasks(tasks.filter((task) => task.text !== deletedTaskText));
+  function handleCategorySelected(e){
+    //console.log(e.target.textContent)
+
+    // TODO: Update classNames using state
+    e.target.className = "selected"
+    setSelectedCategory(e.target.textContent)
   }
 
-  const visibleTasks = tasks.filter((task) => category === "All" || task.category === category);
+  const categorisedTasks = tasks.filter(task => {
+    if (selectedCategory === "All") return true
+
+    return task.category === selectedCategory
+  })
+
   return (
     <div className="App">
       <h2>My tasks</h2>
-      <NewTaskForm categories={CATEGORIES.filter((cat) => cat !== "All")} 
-      onTaskFormSubmit= {handleAddTask} />
-      <TaskList onDeleteTask={handleDeleteTask} tasks={visibleTasks}/>
+      <CategoryFilter categories={CATEGORIES} onCategorySelected={handleCategorySelected}/>
+      <NewTaskForm categories={CATEGORIES} onTaskFormSubmit={handleFormSubmit}/>
+      <TaskList tasks={categorisedTasks }/>
     </div>
   );
 }
